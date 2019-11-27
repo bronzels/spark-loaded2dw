@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>at.bronzels</groupId>
-    <artifactId>loaded2dw</artifactId>
+    <artifactId>spark-loaded2dw</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
