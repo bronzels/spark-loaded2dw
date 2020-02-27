@@ -1,14 +1,4 @@
-package at.bronzels
-
-/*import com.fm.data.libbatch.spark.dao.KuDuDao
-import com.fm.data.libbatch.spark.util.MySparkUtil
-import com.fm.data.libcommon.util.MyString
-import com.fm.data.libfmbatch.FMCondition
-import com.fm.data.libfmbatch.FMCondition._
-import org.apache.kudu.spark.kudu.KuduContext
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.types.{DataType, DoubleType, IntegerType, LongType, StringType, StructField, StructType}
-import com.fm.data.libfmcommon.{Constants => fmcommonConstants}*/
+package at.bronzels.spark
 
 object QueryTSDBAndInsertKudu {
   /*def createSchema(StructFields: Array[StructField], pks: Array[String]):StructType = {
