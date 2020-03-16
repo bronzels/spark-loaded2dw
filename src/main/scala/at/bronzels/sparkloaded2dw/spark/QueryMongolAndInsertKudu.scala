@@ -1,12 +1,13 @@
-package at.bronzels.spark
+package at.bronzels.sparkloaded2dw.spark
 
-import at.bronzels.{CliInput, Constants}
-import at.bronzels.libcdcdwbatch.conf.{MongoEnvConf, MySQLEnvConf}
+import at.bronzels.libcdcdwbatch.conf.MongoEnvConf
 import at.bronzels.libcdcdwbatch.dao.{KuDuDao, MongoDao}
 import at.bronzels.libcdcdwbatch.util.CommonStat.StructFieldWHDefaultValue
 import at.bronzels.libcdcdwbatch.util.{CommonStat, MySparkUtil}
-import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
+import at.bronzels.sparkloaded2dw.Constants
+import at.bronzels.sparkloaded2dw.{CliInput, Constants}
 import org.apache.spark.sql.types.{LongType, StructField}
+import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
 object QueryMongolAndInsertKudu {
 

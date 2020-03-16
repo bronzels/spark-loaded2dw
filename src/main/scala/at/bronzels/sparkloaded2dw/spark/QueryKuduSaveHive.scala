@@ -1,11 +1,13 @@
-package at.bronzels.spark
+package at.bronzels.sparkloaded2dw.spark
 
-import at.bronzels.CliInput
 import at.bronzels.libcdcdwbatch.dao.KuDuDao
 import at.bronzels.libcdcdwbatch.util.MySparkUtil
+import at.bronzels.sparkloaded2dw.CliInput
 import org.apache.spark.sql.SparkSession
 
-object QueryHiveAndInsertKudu {
+object QueryKuduSaveHive {
+
+
   def main(args: Array[String]): Unit = {
     val myCli = new CliInput
     val options = myCli.buildOptions()
@@ -14,15 +16,12 @@ object QueryHiveAndInsertKudu {
 
     val kuduMaster = myCli.kuduConnUrl
 
-    val table2Load= Array(("h_2_0_4_2_mt4trades_jsd", Array("brokerid", "login","ticket")))
-    //val outputPrefix = myCli.outputPrefix
+    val table2Load = Array(("h_2_0_4_2_mt4trades_jsd", Array("brokerid", "login", "ticket")))
     val outputPrefix = "jsd::"
-
     table2Load.foreach(table => {
-      val selectDF = ss.read.table(table._1)
-      KuDuDao.saveFormatDF2Kudu(ss, kuduMaster, selectDF, outputPrefix + table._1, table._2)
+      val kuduDF = KuDuDao.readKuduTable(ss, kuduMaster, outputPrefix + table._1)
+      kuduDF.repartition(6).write.format("orc").option("serialization.null.format", "").saveAsTable(table._1)
     })
 
   }
-
 }

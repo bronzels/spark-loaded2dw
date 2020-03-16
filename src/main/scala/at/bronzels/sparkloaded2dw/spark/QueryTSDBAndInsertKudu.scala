@@ -1,4 +1,4 @@
-package at.bronzels.spark
+package at.bronzels.sparkloaded2dw.spark
 
 object QueryTSDBAndInsertKudu {
   /*def createSchema(StructFields: Array[StructField], pks: Array[String]):StructType = {

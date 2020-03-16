@@ -1,4 +1,4 @@
-package at.bronzels
+package at.bronzels.sparkloaded2dw
 
 object Constants {
 

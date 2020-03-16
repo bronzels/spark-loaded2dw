@@ -1,12 +1,12 @@
-package at.bronzels.spark
+package at.bronzels.sparkloaded2dw.spark
 
-import at.bronzels.CliInput
 import at.bronzels.libcdcdwbatch.conf.MySQLEnvConf
 import at.bronzels.libcdcdwbatch.dao.{KuDuDao, MysqlDao}
 import at.bronzels.libcdcdwbatch.util.CommonStat.StructFieldWHDefaultValue
 import at.bronzels.libcdcdwbatch.util.{CommonStat, MySparkUtil}
-import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
+import at.bronzels.sparkloaded2dw.CliInput
 import org.apache.spark.sql.types.{LongType, StructField}
+import org.apache.spark.sql.{DataFrame, SparkSession}
 
 object QueryMysqlAndInsertKudu {
   def main(args: Array[String]): Unit = {

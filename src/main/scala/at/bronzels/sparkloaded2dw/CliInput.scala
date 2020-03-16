@@ -1,4 +1,4 @@
-package at.bronzels
+package at.bronzels.sparkloaded2dw
 
 import at.bronzels.libcdcdw.CommonCli
 import org.apache.commons.cli.{Option, Options}
