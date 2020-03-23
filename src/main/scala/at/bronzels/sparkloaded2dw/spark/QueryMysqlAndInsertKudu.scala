@@ -21,7 +21,7 @@ object QueryMysqlAndInsertKudu {
     val kuduMaster = myCli.kuduConnUrl
     val table2KuduArr = myCli.tables2load
     val outputPrefix = myCli.outputPrefix
-    val mysqlUrl = "jdbc:mysql://%s/%s?user=%s&password=%s&zeroDateTimeBehavior=convert_to_null".format(myCli.dbConnUrl, myCli.dbName, myCli.dbUser, myCli.dbPassword)
+    val mysqlUrl = "jdbc:mysql://%s/%s?user=%s&password=%s&zeroDateTimeBehavior=convertToNull".format(myCli.dbConnUrl, myCli.dbName, myCli.dbUser, myCli.dbPassword)
     val mySQLEnvConf: MySQLEnvConf = new MySQLEnvConf(mysqlUrl, myCli.dbUser, myCli.dbPassword, myCli.dbName)
 
     /* (1, 2) 中 1 表示新加的 column 的 StructField, 2 表示 default 值, 用字符串表示，因为会用 cast 转换为 1 中指定的 dataType */
