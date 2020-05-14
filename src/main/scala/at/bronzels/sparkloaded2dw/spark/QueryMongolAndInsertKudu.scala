@@ -42,7 +42,7 @@ def main(args: Array[String]): Unit = {
       val rawMongoDf = MongoDao.getMongoDF(mongoEnvConf, ss,  tableName)
       val afterAddFixColumnDF = CommonStat.addColumnWithDefaultValue(rawMongoDf, fixColumn2Add)
       afterConvertDF = MongoDao.getDataTypeConvertDF(ss, afterAddFixColumnDF)
-      afterConvertDF.write.mode(SaveMode.Overwrite).saveAsTable(hiveOutputTable)
+      //afterConvertDF.write.mode(SaveMode.Overwrite).saveAsTable(hiveOutputTable)
     }
 
     val pkFields = table2PrimaryKeysMap.getOrElse(tableName, Constants.defaultMongoPrimaryKey)
