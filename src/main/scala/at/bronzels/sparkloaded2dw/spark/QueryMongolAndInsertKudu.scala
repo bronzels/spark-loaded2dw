@@ -47,7 +47,7 @@ def main(args: Array[String]): Unit = {
 
     val pkFields = table2PrimaryKeysMap.getOrElse(tableName, Constants.defaultMongoPrimaryKey)
     KuDuDao.saveFormatDF2Kudu(ss, kuduMaster, afterConvertDF, kuduOutputTable, Array(pkFields), isSrcFieldNameWTUpperCase)
-    afterConvertDF.write.mode("overwrite").saveAsTable(tableName)
+    //afterConvertDF.write.mode("overwrite").saveAsTable(tableName)
 
   })
 }
