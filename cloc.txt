@@ -1,0 +1,15 @@
+cloc spark-loaded2dw --exclude-ext=json,iml,gitignore,txt --exclude-dir=.idea,target
+      13 text files.
+      13 unique files.
+      12 files ignored.
+
+github.com/AlDanial/cloc v 1.74  T=0.03 s (314.6 files/s, 24677.5 lines/s)
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+Scala                            7             89             22            306
+Maven                            1             22             55            211
+Markdown                         1              0              0              1
+-------------------------------------------------------------------------------
+SUM:                             9            111             77            518
+-------------------------------------------------------------------------------

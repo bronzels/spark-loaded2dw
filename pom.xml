@@ -21,6 +21,32 @@
         <mysql.version>8.0.11</mysql.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>alimaven</id>
+            <name>aliyun maven</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>nexus</id>
+            <name>nexus</name>
+            <url>http://pro-hbase01:8081/repository/maven-public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>at.bronzels</groupId>
@@ -142,9 +168,9 @@
             </plugin>
 
             <plugin>
-                <groupId>org.codehaus.mojo </groupId>
-                <artifactId>build-helper-maven-plugin </artifactId>
-                <version>1.9.1 </version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.9.1</version>
             </plugin>
             <plugin>
                 <groupId>org.scala-tools</groupId>
@@ -247,17 +273,16 @@
 
     <distributionManagement>
         <repository>
-            <id>releases</id>
-            <name>Internal Releases</name>
-            <url>http://pro-hbase01:8081/nexus/content/repositories/releases</url>
+            <id>maven-releases</id>
+            <name>maven-releases-repository</name>
+            <url>http://pro-hbase01:8081/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
-            <id>snapshots</id>
-            <name>Internal Snapshots</name>
-            <url>http://pro-hbase01:8081/nexus/content/repositories/snapshots</url>
+            <id>maven-snapshots</id>
+            <name>maven-snapshots-repository</name>
+            <url>http://pro-hbase01:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-
 
 
 </project>
