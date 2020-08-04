@@ -10,6 +10,7 @@ class CliInput extends CommonCli {
 
   var dbConnUrl: String = _
   var dbName: String = _
+  var dbNameWNRev: String = _
   var dbUser: String = _
   var dbPassword: String = _
   var tables2load: Array[String] = _
@@ -28,6 +29,9 @@ class CliInput extends CommonCli {
 
     val databaseName = new Option("dn", "databaseName", true, "connect database name")
     databaseName.setRequired(true);options.addOption(databaseName)
+
+    val databaseNameWNRev = new Option("dnwnr", "databaseNameWNRev", true, "connect database name without revision suffix")
+    databaseNameWNRev.setRequired(false);options.addOption(databaseNameWNRev)
 
     val databaseUser = new Option("du", "databaseUser", true, "database user name")
     databaseUser.setRequired(true);options.addOption(databaseUser)
@@ -69,6 +73,9 @@ class CliInput extends CommonCli {
 
     if (comm.hasOption("dn"))
        dbName = comm.getOptionValue("dn")
+
+    if (comm.hasOption("dnwnr"))
+      dbNameWNRev = comm.getOptionValue("dnwnr")
 
     if (comm.hasOption("du"))
       dbUser = comm.getOptionValue("du")

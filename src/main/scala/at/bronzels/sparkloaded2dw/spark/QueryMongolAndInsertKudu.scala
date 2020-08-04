@@ -31,7 +31,8 @@ def main(args: Array[String]): Unit = {
   )
 
   table2KuduArr.foreach(tableName => {
-    val kuduOutputTable = outputPrefix + "datastatistic_" + tableName.toLowerCase
+    //val kuduOutputTable = outputPrefix + "datastatistic_" + tableName.toLowerCase
+    val kuduOutputTable = outputPrefix + { if(myCli.dbNameWNRev == null) myCli.dbName else myCli.dbNameWNRev } + "_" + tableName.toLowerCase
     val hiveOutputTable = kuduOutputTable.replace("::", "_").replace(".", "_")
     val mongoEnvConf = new MongoEnvConf(mongoUrl)
     var afterConvertDF: DataFrame = null
