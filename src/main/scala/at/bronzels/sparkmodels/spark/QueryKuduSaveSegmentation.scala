@@ -7,6 +7,7 @@ import at.bronzels.sparkmodels.{CliInput, HtmlUtil, TextItemInput, WordUtil}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions._
 import org.apache.spark.storage.StorageLevel
+
 /*
 import com.huaban.analysis.jieba.{JiebaSegmenter, SegToken}
 import com.huaban.analysis.jieba.JiebaSegmenter.SegMode
@@ -54,7 +55,7 @@ object QueryKuduSaveSegmented {
     val jieba_udf = udf { (sentence: String) =>
       val list = StandardTokenizer.segment(sentence)
       CoreStopWordDictionary.apply(list)
-      list.asScala.map(x => x.word.replaceAll(" ","")).toArray[String]
+      list.asScala.map(x => x.word.replaceAll(" ", "")).toArray[String]
     }
     df.withColumn(colname, jieba_udf(col(colname)))
   }
@@ -91,24 +92,48 @@ object QueryKuduSaveSegmented {
     if (myCli.parseIsHelp(options, newargs)) return
 
     var ss: SparkSession = null
-    if(myCli.appModeEnum != null && myCli.appModeEnum.equals(AppModeEnum.LOCAL)) {
+    if (myCli.appModeEnum != null && myCli.appModeEnum.equals(AppModeEnum.LOCAL)) {
       ss = MySparkUtil.getHiveSupportLocalSparkSession(args)
-    } else if(myCli.appModeEnum != null && myCli.appModeEnum.equals(AppModeEnum.REMOTE)) {
+    } else if (myCli.appModeEnum != null && myCli.appModeEnum.equals(AppModeEnum.REMOTE)) {
       val sparkConf = new SparkConf()
         .setMaster("yarn")
-        .set("deploy-mode", "client")
-        .set("yarn.resourcemanager.hostname","pro-hbase01")
-        .set("spark.yarn.queue","root.default")
-        .set("spark.driver.host","192.168.3.4")
+        .set("deploy-mode", "cluster")
+        .set("yarn.resourcemanager.hostname", "pro-hbase01")
+        .set("spark.yarn.queue", "root.default")
+        .set("spark.driver.host", "192.168.3.4")
         .set("spark.core.connection.ack.wait.timeout", "300")
         .set("spark.default.parallelism", "40")
         .set("spark.yarn.executor.memoryOverhead", "1g")
         .set("spark.driver-memory", "10")
         .set("spark.executor-memory", "6g")
         .set("spark.executor-cores", "1")
-        .set("spark.num-executors", "15")
+        .set("spark.num-executors", "5")
+        .set("spark.driver.extraClassPath", "/app/hadoop/spark_shared_jars/*")
+        .set("spark.executor.extraClassPath", "/app/hadoop/spark_shared_jars/*")
+        .setJars(List("/mnt/u/spark-models/target/spark-models-1.0-SNAPSHOT.jar"))
       ss = MySparkUtil.getSparkRemoteSession(args, sparkConf)
       //System.setProperty("HADOOP_USER_NAME", "hadoop")
+      /*
+      ss = SparkSession
+        .builder()
+        .appName(args.mkString(" "))
+        .master("yarn")
+        .config("deploy-mode", "cluster")
+        .config("yarn.resourcemanager.hostname", "pro-hbase01")
+        .config("spark.yarn.queue", "root.default")
+        .config("spark.driver.host", "192.168.3.4")
+        .config("spark.core.connection.ack.wait.timeout", "300")
+        .config("spark.default.parallelism", "40")
+        .config("spark.yarn.executor.memoryOverhead", "1g")
+        .config("spark.driver-memory", "10")
+        .config("spark.executor-memory", "6g")
+        .config("spark.executor-cores", "1")
+        .config("spark.num-executors", "5")
+        .config("spark.driver.extraClassPath", "/app/hadoop/spark_shared_jars/*")
+        .config("spark.executor.extraClassPath", "/app/hadoop/spark_shared_jars/*")
+        .enableHiveSupport()
+        .getOrCreate()
+       */
     } else
       ss = MySparkUtil.getSparkSession(args)
 
@@ -130,18 +155,18 @@ object QueryKuduSaveSegmented {
       throw new RuntimeException("mandatory input is not available")
 
     val kuduDF = KuDuDao.readKuduTable(ss, kuduMaster, myCli.inputPrefix + textItemInput.getTableName)
-        .repartition(12)
+      .repartition(12)
     kuduDF.persist(StorageLevel.MEMORY_AND_DISK)
     //kuduDF.printSchema()
     kuduDF.show(5)
-    System.out.println("kuduDF.count():"+kuduDF.count())
+    System.out.println("kuduDF.count():" + kuduDF.count())
 
     var filteredDF = kuduDF
     if (textItemInput.sql2Filter != null) {
       filteredDF = filteredDF
         .filter(textItemInput.sql2Filter)
       //filteredDF.show(5)
-      System.out.println("filteredDF.count():"+filteredDF.count())
+      System.out.println("filteredDF.count():" + filteredDF.count())
     }
 
     var selectedDF = filteredDF
@@ -156,7 +181,7 @@ object QueryKuduSaveSegmented {
     val tagFilteredDF = getTagFiltered(ss, selectedDF, textItemInput.fieldTextId)
     //tagFilteredDF.show(5)
     tagFilteredDF.show()
-    System.out.println("tagFilteredDF.count():"+tagFilteredDF.count())
+    System.out.println("tagFilteredDF.count():" + tagFilteredDF.count())
 
     val segmentedDF = getSegmented(ss, tagFilteredDF, textItemInput.fieldTextId)
     segmentedDF.printSchema()
@@ -164,11 +189,11 @@ object QueryKuduSaveSegmented {
 
     val in = QueryKuduSaveSegmented.getClass.getClassLoader.getResourceAsStream("stopwords.txt")
     val stopwords = scala.io.Source.fromInputStream(in).getLines.toArray
-    System.out.println("stopwords:"+stopwords)
+    System.out.println("stopwords:" + stopwords)
     val stopRemovedDF = getStopRemoved(ss, segmentedDF, textItemInput.fieldTextId, stopwords)
     stopRemovedDF.printSchema()
     stopRemovedDF.show(5)
-    System.out.println("stopRemovedDF.count():"+stopRemovedDF.count())
+    System.out.println("stopRemovedDF.count():" + stopRemovedDF.count())
 
     stopRemovedDF.repartition(6).write.format("orc").option("serialization.null.format", "").saveAsTable(myCli.outputPrefix + textItemInput.getTableName)
   }
