@@ -68,10 +68,14 @@ object QueryKuduSaveSegmented {
   }
 
   //spark-submit --master yarn --deploy-mode client --queue root.default --conf spark.core.connection.ack.wait.timeout=300 --conf spark.default.parallelism=40 --conf spark.driver.extraClassPath=/app/hadoop/hive/lib/hive-hbase-handler.jar:/app/hadoop/alluxio/client/spark/alluxio-1.6.1-spark-client.jar:/app/hadoop/spark_driver_jars/*:/app/hadoop/spark_shared_jars/* --conf spark.executor.extraClassPath=/app/hadoop/hive/lib/hive-hbase-handler.jar:/app/hadoop/alluxio/client/spark/alluxio-1.6.1-spark-client.jar:/app/hadoop/spark_executor_jars/*:/app/hadoop/spark_shared_jars/* --conf spark.core.connection.ack.wait.timeout=300 --conf spark.default.parallelism=40 --conf spark.yarn.executor.memoryOverhead=1g --driver-memory 10g --executor-memory 6g --executor-cores 1 --num-executors 5  --class at.bronzels.sparkmodels.spark.QueryKuduSaveSegmented /tmp/spark-models-1.0-SNAPSHOT.jar -kcu pro-hbase01:7052 -i dw_v_0_0_1_20191223_1830::strategy. -o segmented_ -D tablename=social_blog -D field_textid=body -D field_others=userid,createtime,area,origintype,displaylevel -D sql2filter='AuditStatus = 1 AND EntityStatus < 3'
+  /*
+  export HADOOP_USER_NAME=hadoop
+  export SPARK_HOME=/mnt/u/spark
+  */
   def main(args: Array[String]): Unit = {
     val newargs = Array[String](
-      "-am", "local",
-      //"-am", "remote",
+      //"-am", "local",
+      "-am", "remote",
       "-kcu", "pro-hbase01:7052",
       "-i", "dw_v_0_0_1_20191223_1830::strategy.",
       "-o", "segmented_",
@@ -83,17 +87,17 @@ object QueryKuduSaveSegmented {
 
     val myCli = new CliInput
     val options = myCli.buildOptions()
-    if (myCli.parseIsHelp(options, args)) return
-    //if (myCli.parseIsHelp(options, newargs)) return
+    //if (myCli.parseIsHelp(options, args)) return
+    if (myCli.parseIsHelp(options, newargs)) return
 
     var ss: SparkSession = null
     if(myCli.appModeEnum != null && myCli.appModeEnum.equals(AppModeEnum.LOCAL)) {
       ss = MySparkUtil.getHiveSupportLocalSparkSession(args)
     } else if(myCli.appModeEnum != null && myCli.appModeEnum.equals(AppModeEnum.REMOTE)) {
       val sparkConf = new SparkConf()
-        .setMaster("yarn-client")
+        .setMaster("yarn")
+        .set("deploy-mode", "client")
         .set("yarn.resourcemanager.hostname","pro-hbase01")
-        //.set("deploy-mode", "client")
         .set("spark.yarn.queue","root.default")
         .set("spark.driver.host","192.168.3.4")
         .set("spark.core.connection.ack.wait.timeout", "300")
@@ -104,7 +108,7 @@ object QueryKuduSaveSegmented {
         .set("spark.executor-cores", "1")
         .set("spark.num-executors", "15")
       ss = MySparkUtil.getSparkRemoteSession(args, sparkConf)
-      System.setProperty("HADOOP_USER_NAME", "hadoop")
+      //System.setProperty("HADOOP_USER_NAME", "hadoop")
     } else
       ss = MySparkUtil.getSparkSession(args)
 
